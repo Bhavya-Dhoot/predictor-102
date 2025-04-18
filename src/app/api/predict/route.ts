@@ -15,7 +15,13 @@ export async function POST(req: NextRequest) {
     const { symbol, current } = await req.json();
 
     // Use absolute URL for local API route when running in server context
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    // On Vercel/production, use the deployed URL from Vercel env vars
+    let baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    if (!baseUrl) {
+      baseUrl = process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : 'http://localhost:3000';
+    }
     let historical = [];
     let usedRange = '1y';
     let latestTimestamp = null;
