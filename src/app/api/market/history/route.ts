@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
     const queryOpts = {
       period1: start,
       period2: end,
-      interval: '1d',
+      interval: '1d' as const,
     };
     const result = await yahooFinance.historical(symbol, queryOpts);
     if (!result || result.length === 0) {
