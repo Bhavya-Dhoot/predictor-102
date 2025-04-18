@@ -37,12 +37,11 @@ export async function GET(req: NextRequest) {
 
   try {
     // Yahoo Finance expects '^NSEI' for Nifty 50, '^GSPC' for S&P 500, etc.
-    const queryOpts: { period1: Date; period2: Date; interval: "1d" } = {
+    const result = await yahooFinance.historical(symbol, {
       period1: start,
       period2: end,
       interval: "1d",
-    };
-    const result = await yahooFinance.historical(symbol, queryOpts);
+    });
     if (!result || result.length === 0) {
       throw new Error('No historical data found');
     }
