@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import yahooFinance from 'yahoo-finance2';
-import type { YahooHistoricalOptions } from '../../../scripts/yahoo-types';
+import type { HistoricalOptions } from 'yahoo-finance2';
 
 const CACHE_TTL = parseInt(process.env.CACHE_TTL || '60', 10);
 
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
 
   try {
     // Yahoo Finance expects '^NSEI' for Nifty 50, '^GSPC' for S&P 500, etc.
-    const queryOpts: YahooHistoricalOptions = {
+    const queryOpts: HistoricalOptions = {
       period1: start,
       period2: end,
       interval: '1d',
