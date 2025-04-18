@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "next.config.js", "use": "@vercel/next" }
+  ],
+  "env": {
+    "GEMINI_API_KEY": "",
+    "FINANCE_API_KEY": ""
+  }
+}
