@@ -1,0 +1,71 @@
+Predictor 101 — How the API, Indexing, and Internal Calls Work
+==============================================================
+
+Project Structure & Indexing
+----------------------------
+- All API routes are under: `src/app/api/`
+- Example endpoints:
+    - `/api/predict` (Prediction API)
+    - `/api/market/history` (Fetches historical OHLCV data)
+    - `/api/market/quote` (Current quote)
+    - `/api/market` (Finnhub market data)
+    - `/api/export`, `/api/backtest`, `/api/notify`, etc.
+- Each route has its own `route.ts` file, e.g.:
+    - `src/app/api/predict/route.ts`
+    - `src/app/api/market/history/route.ts`
+
+How Internal API Calls Work
+----------------------------
+- The Prediction API (`/api/predict`) needs historical data to make predictions.
+- It calls `/api/market/history` **internally** (server-to-server) using `fetch()`.
+- The base URL for these calls is determined by environment variables:
+    1. `NEXT_PUBLIC_BASE_URL` (recommended, e.g. `https://predictor-101.vercel.app`)
+    2. If not set, falls back to `https://${process.env.VERCEL_URL}`
+    3. If neither is set, uses `http://localhost:3000` (for local dev only)
+- Example call from `src/app/api/predict/route.ts`:
+
+```typescript
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ||
+                (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+const historyRes = await fetch(`${baseUrl}/api/market/history?symbol=${encodeURIComponent(symbol)}&range=${range}`);
+```
+
+Indexing & Pathing
+-------------------
+- Endpoints are indexed by their folder structure under `src/app/api/`.
+- The path `/api/market/history` maps to `src/app/api/market/history/route.ts`.
+- Next.js automatically handles routing based on this structure.
+
+How Data Flows
+---------------
+1. **Frontend** (e.g., `/prediction` page) calls `/api/predict` with a symbol and current data.
+2. **/api/predict**:
+    - Receives the request.
+    - Fetches historical data from `/api/market/history`.
+    - Formats a prompt for Gemini API, sends it, and returns the result.
+3. **/api/market/history**:
+    - Fetches OHLCV data using Yahoo Finance (now via `chart()` method).
+    - Returns data in `{ t, c, o, h, l, v }` arrays.
+4. **/api/predict**:
+    - Parses the historical data, uses it for prediction, and returns the prediction as JSON.
+
+Environment Variables (Critical for Internal Calls)
+---------------------------------------------------
+- `NEXT_PUBLIC_BASE_URL`: The full URL of your deployed site (required for server-to-server fetches in production)
+- `VERCEL_URL`: The Vercel-provided domain (set manually for runtime use)
+- `GEMINI_API_KEY`, `FINANCE_API_KEY`, `CACHE_TTL`: For external APIs and caching
+
+Troubleshooting Internal Calls
+------------------------------
+- If `baseUrl` is not set correctly, fetches will fail with `ECONNREFUSED 127.0.0.1:3000` in production.
+- If you see URL parse errors, check for accidental Markdown formatting or brackets in your `.env` values.
+
+References
+----------
+- [Next.js API Routing](https://nextjs.org/docs/app/building-your-application/routing/api-routes)
+- [Vercel Environment Variables](https://vercel.com/docs/concepts/projects/environment-variables)
+- [Yahoo Finance2 Deprecated historical()](https://github.com/gadicc/node-yahoo-finance2/issues/795)
+
+---
+
+This file gives you a high-level overview of how your API routing, indexing, and internal fetches work in Predictor 101. For any new endpoints, just follow the same folder and naming conventions!
