@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
     // Yahoo Finance expects '^NSEI' for Nifty 50, '^GSPC' for S&P 500, etc.
     // Only allow valid intervals
     const validIntervals = ['1d', '1wk', '1mo'] as const;
-    const interval = validIntervals.includes(range as any) ? range as typeof validIntervals[number] : '1d';
+    const interval: '1d' | '1wk' | '1mo' = validIntervals.includes(range as any) ? (range as '1d' | '1wk' | '1mo') : '1d';
     const queryOpts: HistoricalOptions = {
       period1: start,
       period2: end,
