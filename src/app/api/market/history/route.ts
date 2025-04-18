@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import yahooFinance from 'yahoo-finance2';
-import type { YahooHistoricalOptions as HistoricalOptions } from '../../../../../scripts/yahoo-types';
 
 const CACHE_TTL = parseInt(process.env.CACHE_TTL || '60', 10);
 
@@ -38,17 +37,11 @@ export async function GET(req: NextRequest) {
 
   try {
     // Yahoo Finance expects '^NSEI' for Nifty 50, '^GSPC' for S&P 500, etc.
-    // Only allow valid intervals
-    const validIntervals = ['1d', '1wk', '1mo'] as const;
-    const isValidInterval = (val: string): val is typeof validIntervals[number] =>
-      validIntervals.includes(val as any);
-    const interval = isValidInterval(range) ? range : '1d';
-    const queryOpts: HistoricalOptions = {
+    const result = await yahooFinance.historical(symbol, {
       period1: start,
       period2: end,
-      interval,
-    };
-    const result = await yahooFinance.historical(symbol, queryOpts);
+      interval: '1d', // Pass as a literal so TS infers the correct type
+    });
     if (!result || result.length === 0) {
       throw new Error('No historical data found');
     }
