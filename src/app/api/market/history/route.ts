@@ -26,16 +26,16 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(cache[cacheKey].data);
   }
 
-  // Calculate date range
-  const end = new Date();
-  let start = new Date();
-  if (range === '1mo') start.setMonth(end.getMonth() - 1);
-  else if (range === '3mo') start.setMonth(end.getMonth() - 3);
-  else if (range === '6mo') start.setMonth(end.getMonth() - 6);
-  else if (range === '1y') start.setFullYear(end.getFullYear() - 1);
-  else start.setMonth(end.getMonth() - 1);
-
   try {
+    // Calculate date range
+    const end = new Date();
+    let start = new Date();
+    if (range === '1mo') start.setMonth(end.getMonth() - 1);
+    else if (range === '3mo') start.setMonth(end.getMonth() - 3);
+    else if (range === '6mo') start.setMonth(end.getMonth() - 6);
+    else if (range === '1y') start.setFullYear(end.getFullYear() - 1);
+    else start.setMonth(end.getMonth() - 1);
+
     // Yahoo Finance expects '^NSEI' for Nifty 50, '^GSPC' for S&P 500, etc.
     const result = await yahooFinance.historical(
       symbol,
@@ -63,7 +63,8 @@ export async function GET(req: NextRequest) {
     const response = { s: sorted.t.length > 0 ? 'ok' : 'no_data', ...sorted };
     cache[cacheKey] = { data: response, expires: now + CACHE_TTL * 1000 };
     return NextResponse.json(response);
-  } catch (error) {
-    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+  } catch (error: any) {
+    // Improved error handling
+    return NextResponse.json({ error: error.message || 'Unknown error' }, { status: 500 });
   }
 }

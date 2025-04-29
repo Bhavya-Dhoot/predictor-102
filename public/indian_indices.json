@@ -1,0 +1,22 @@
+[
+  { "label": "Nifty 50", "symbol": "^NSEI" },
+  { "label": "Sensex", "symbol": "^BSESN" },
+  { "label": "Nifty Bank", "symbol": "^NSEBANK" },
+  { "label": "Nifty Next 50", "symbol": "^NSMIDCP" },
+  { "label": "Nifty Midcap 50", "symbol": "^NSEMDCP50" },
+  { "label": "Nifty 100", "symbol": "^CNX100" },
+  { "label": "Nifty 200", "symbol": "^CNX200" },
+  { "label": "Nifty 500", "symbol": "^CNX500" },
+  { "label": "Nifty Smallcap 100", "symbol": "^CNXSC" },
+  { "label": "Nifty Midcap 100", "symbol": "^CNXMID" },
+  { "label": "Nifty Infrastructure", "symbol": "^CNXINFRA" },
+  { "label": "Nifty IT", "symbol": "^CNXIT" },
+  { "label": "Nifty FMCG", "symbol": "^CNXFMCG" },
+  { "label": "Nifty Pharma", "symbol": "^CNXPHARMA" },
+  { "label": "Nifty Energy", "symbol": "^CNXENERGY" },
+  { "label": "Nifty Auto", "symbol": "^CNXAUTO" },
+  { "label": "Nifty Realty", "symbol": "^CNXREALTY" },
+  { "label": "Nifty Financial Services", "symbol": "^CNXFIN" },
+  { "label": "Nifty Metal", "symbol": "^CNXMETAL" },
+  { "label": "Nifty PSU Bank", "symbol": "^CNXPSUBANK" }
+]

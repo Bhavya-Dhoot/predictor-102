@@ -22,6 +22,12 @@ export async function POST(req: NextRequest) {
         ? `https://${process.env.VERCEL_URL}`
         : 'http://localhost:3000';
     }
+
+    // Enhanced runtime check for base URL
+    if (!baseUrl || baseUrl === 'http://localhost:3000') {
+      throw new Error('NEXT_PUBLIC_BASE_URL is not set. Please set this environment variable to the deployed URL (e.g., https://your-app.vercel.app) for production.');
+    }
+
     let historical = [];
     let usedRange = '1y';
     let latestTimestamp = null;
@@ -52,7 +58,7 @@ export async function POST(req: NextRequest) {
     // 4. Give a cumulative rating with the important information block at the top
     // 5. Output the summary block in JSON format with the following keys:
     //    Market Sentiment, Predicted Close, Confidence %, Up/Down, Magnitude, Short Reasoning, Upside Target, Timing, Data Timestamp
-    const prompt = `You are an advanced financial analyst AI. Given the following historical daily OHLCV data (up to ${usedRange}) and current market conditions for ${symbol}, do the following:\n\n1. Analyze the historical data for trends, volatility, and cycles.\n2. Weigh the current market sentiment and any upcoming expected results (such as earnings, economic releases, or major events).\n3. Consider what policy changes (monetary, fiscal, regulatory) might occur and their likely impact.\n4. Give a cumulative rating and summary.\n\n**IMPORTANT:**\nAt the very top of your answer, provide a JSON object with the following keys:\n\n{\n  "Market Sentiment": "...",\n  "Predicted Close": "...",\n  "Confidence %": "...",\n  "Up/Down": "...",\n  "Magnitude": "...",\n  "Short Reasoning": "...",\n  "Upside Target": "...",\n  "Timing": "...",\n  "Data Timestamp": "${new Date(latestTimestamp * 1000).toISOString().slice(0, 10)}"\n}\n\n- "Upside Target": Give the next significant upside price target you expect could be reached if the trend continues.\n- "Timing": Specify the time frame (e.g., "by end of week", "within 1-2 days", "by next earnings", etc.) for your prediction.\n- "Data Timestamp": Fill this with the ISO 8601 date (YYYY-MM-DD) of the most recent data available.\n\nBelow this block, provide a detailed explanation that references the data, sentiment, expected results, and policy factors.\n\nData:\nHistorical: ${JSON.stringify(historical)}\nCurrent: ${JSON.stringify(current)}\n\nBe explicit about how each factor impacts your prediction.`;
+    const prompt = `You are an advanced financial analyst AI. Given the following historical daily OHLCV data (up to ${usedRange}) and current market conditions for ${symbol}, do the following:\n\n1. Analyze historical trends, volatility, patterns\n2. Assess current sentiment, upcoming events\n3. Consider policy impacts (monetary, fiscal, regulatory)\n4. Rate and summarize prediction\n\nReturn this JSON first:\n{\n  \"Market Sentiment\": \"...\",\n  \"Predicted Close\": \"...\",\n  \"Confidence %\": \"...\",\n  \"Up/Down\": \"...\",\n  \"Magnitude\": \"...\",\n  \"Short Reasoning\": \"...\",\n  \"Upside Target\": \"...\",\n  \"Timing\": \"...\",\n  \"Data Timestamp\": \"${new Date(latestTimestamp * 1000).toISOString().slice(0, 10)}\"\n}\n\nThen analyze:\n- Technical factors (key levels, indicators, patterns)\n- Fundamental context (earnings, sector trends)\n- Market environment (sentiment, macro factors)\n- Risk assessment (potential downside scenarios)\n- Strategy suggestion (entry, exit, risk management)\n\nData:\nHistorical: ${JSON.stringify(historical)}\nCurrent: ${JSON.stringify(current)}\n\nBe specific about how each factor impacts your prediction.`;
     const body = {
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
     };

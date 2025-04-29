@@ -53,6 +53,21 @@ See `.env.example` for required keys.
 - Deploy easily to [Vercel](https://vercel.com/) or [Netlify](https://www.netlify.com/).
 - Set environment variables in the deployment dashboard (never commit secrets).
 
+## Code Quality & Best Practices
+- **TypeScript strict mode** enabled
+- Centralized fetch utility for all HTTP requests
+- Robust error handling in API routes and client
+- Unit tests for core logic and components (`/tests`)
+- Environment variable validation at startup
+- Accessible, reusable UI components (ARIA, keyboard nav)
+- GitHub Actions CI for lint, test, and build
+- Comments and docs for all complex logic
+
+## Advanced Features Scaffolded
+- Backtesting endpoint/page for prediction accuracy
+- User account/auth integration ready (NextAuth.js)
+- Notification & export utilities
+
 ## Contributing
 Contributions are welcome! To contribute:
 1. Fork the repository
@@ -60,6 +75,8 @@ Contributions are welcome! To contribute:
 3. Commit your changes (`git commit -am 'Add new feature'`)
 4. Push to the branch (`git push origin feature/your-feature`)
 5. Open a Pull Request
+- See code comments and `/tests` for guidance
+- PRs run full CI suite
 
 ## Testing
 - Place tests in the `/tests` directory.
