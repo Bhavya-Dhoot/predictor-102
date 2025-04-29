@@ -1,6 +1,6 @@
-# Predictor 101: Financial Index Prediction Web App
+# Predictor 102: Financial Index Prediction Web App
 
-Predictor 101 predicts end-of-day closes for financial indices using real-time data and Google Gemini ML. Built with Next.js (App Router), Tailwind CSS, and ready for Vercel deployment.
+Predictor 102 predicts end-of-day closes for financial indices using real-time data and Google Gemini ML. Built with Next.js (App Router), Tailwind CSS, and ready for Vercel deployment.
 
 ## Features
 - Real-time market data & charts
@@ -14,7 +14,7 @@ Predictor 101 predicts end-of-day closes for financial indices using real-time d
 1. **Clone the repo**
     ```bash
     git clone <your-repo-url>
-    cd predictor-101
+    cd predictor-102
     npm install
     ```
 2. **Configure Environment Variables**
