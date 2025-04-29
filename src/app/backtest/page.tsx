@@ -1,6 +1,5 @@
 "use client";
-import React, { useState, useMemo } from 'react';
-import indianIndices from '../../indian_indices.json';
+import React, { useState, useMemo, useEffect } from 'react';
 
 function fuzzyMatchIndices(indices: {label: string, symbol: string}[], query: string) {
   if (!query) return indices;
@@ -12,15 +11,29 @@ const DEFAULT_DAYS = 30;
 
 const BacktestPage: React.FC = () => {
   const [search, setSearch] = useState('');
-  const [symbol, setSymbol] = useState(indianIndices[0].symbol);
-  const [indexName, setIndexName] = useState(indianIndices[0].label);
+  const [indices, setIndices] = useState<{label: string, symbol: string}[]>([]);
+  const [symbol, setSymbol] = useState('');
+  const [indexName, setIndexName] = useState('');
   const [days, setDays] = useState(DEFAULT_DAYS);
   const [results, setResults] = useState<any>(null);
   const [summary, setSummary] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const filteredIndices = useMemo(() => fuzzyMatchIndices(indianIndices, search), [search]);
+  useEffect(() => {
+    async function loadIndices() {
+      const res = await fetch('/indian_indices.json');
+      const data = await res.json();
+      setIndices(data);
+      if (data.length > 0) {
+        setSymbol(data[0].symbol);
+        setIndexName(data[0].label);
+      }
+    }
+    loadIndices();
+  }, []);
+
+  const filteredIndices = useMemo(() => fuzzyMatchIndices(indices, search), [indices, search]);
 
   const runBacktest = async () => {
     setLoading(true);
@@ -142,11 +155,5 @@ const BacktestPage: React.FC = () => {
     </div>
   );
 };
-
-// Tailwind custom style for vertical slider
-// .slider-vertical {
-//   transform: rotate(270deg);
-//   accent-color: #2563eb;
-// }
 
 export default BacktestPage;
